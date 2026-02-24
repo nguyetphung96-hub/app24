@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CBME YHCT – Demo (2 Tab: Input / Output)</title>
+  <style>
+    :root{
+      --blue:#1e5eff;
+      --blue2:#2b74ff;
+      --blue3:#eaf1ff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --line:#e2e8f0;
+      --bg:#f6f8fc;
+      --card:#ffffff;
+      --shadow:0 10px 30px rgba(15,23,42,.10);
+      --radius:16px;
+      --radius2:12px;
+      --danger:#ef4444;
+      --ok:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:linear-gradient(180deg, #ffffff 0%, var(--bg) 100%);
+    }
+    header{
+      position:sticky; top:0;
+      background:rgba(255,255,255,.8);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--line);
+      z-index:20;
+    }
+    .wrap{max-width:1100px; margin:0 auto; padding:18px 16px;}
+    .title{
+      display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex; align-items:center; gap:10px;
+    }
+    .logo{
+      width:38px; height:38px; border-radius:12px;
+      background: radial-gradient(circle at 30% 30%, #ffffff 0%, var(--blue3) 50%, var(--blue) 120%);
+      border:1px solid rgba(30,94,255,.25);
+      box-shadow: 0 6px 18px rgba(30,94,255,.18);
+    }
+    h1{font-size:20px; margin:0}
+    .sub{font-size:12px; color:var(--muted); margin-top:2px}
+    .pill{
+      padding:8px 10px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      display:flex; gap:8px; align-items:center;
+      background:#fff;
+      font-size:12px;
+      color:var(--muted);
+    }
+    .tabs{
+      display:flex; gap:10px; margin-top:14px;
+    }
+    .tabbtn{
+      flex:1;
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:999px;
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:center; gap:8px;
+      transition:.15s ease;
+      font-weight:600;
+    }
+    .tabbtn.active{
+      border-color:rgba(30,94,255,.35);
+      background:linear-gradient(180deg, #ffffff 0%, var(--blue3) 100%);
+      color:var(--blue);
+      box-shadow: 0 10px 20px rgba(30,94,255,.12);
+    }
+
+    main{padding:20px 0 60px}
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap:16px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .cardHead{
+      padding:14px 16px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px;
+    }
+    .cardTitle{
+      display:flex; flex-direction:column; gap:4px;
+    }
+    .cardTitle b{font-size:14px}
+    .cardTitle span{font-size:12px; color:var(--muted)}
+    .cardBody{padding:16px}
+
+    label{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    input[type="text"], input[type="number"], input[type="datetime-local"], textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+      font-size:14px;
+      background:#fff;
+      color:var(--text);
+    }
+    textarea{min-height:210px; resize:vertical; line-height:1.45}
+    .row{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+    @media (max-width:520px){ .row{grid-template-columns:1fr} }
+
+    .btnRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px}
+    .btn{
+      border:1px solid rgba(30,94,255,.28);
+      background:linear-gradient(180deg, var(--blue2) 0%, var(--blue) 100%);
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-weight:700;
+      box-shadow: 0 12px 22px rgba(30,94,255,.18);
+      transition:.15s ease;
+      display:inline-flex; align-items:center; gap:8px;
+    }
+    .btn:hover{transform:translateY(-1px)}
+    .btn.secondary{
+      background:#fff;
+      color:var(--blue);
+      border:1px solid rgba(30,94,255,.35);
+      box-shadow:none;
+      font-weight:700;
+    }
+    .btn.ghost{
+      background:#fff;
+      color:var(--text);
+      border:1px solid var(--line);
+      box-shadow:none;
+      font-weight:700;
+    }
+    .btn.danger{
+      background:#fff;
+      color:var(--danger);
+      border:1px solid rgba(239,68,68,.25);
+      box-shadow:none;
+    }
+
+    .hint{
+      background:var(--blue3);
+      border:1px solid rgba(30,94,255,.20);
+      border-radius:12px;
+      padding:10px 12px;
+      color:#0b2b7a;
+      font-size:12px;
+      line-height:1.35;
+    }
+
+    .divider{height:1px; background:var(--line); margin:14px 0}
+    .muted{color:var(--muted); font-size:12px}
+
+    .symList{display:flex; flex-direction:column; gap:12px}
+    .symItem{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fff;
+    }
+    .symTop{
+      display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+    }
+    .symName{font-weight:800}
+    .tag{
+      font-size:11px;
+      padding:4px 8px;
+      border-radius:999px;
+      background:var(--blue3);
+      color:var(--blue);
+      border:1px solid rgba(30,94,255,.20);
+      white-space:nowrap;
+    }
+    .symDesc{margin-top:6px; color:var(--muted); font-size:12px; line-height:1.35}
+    .vasRow{
+      margin-top:10px;
+      display:grid;
+      grid-template-columns: 1fr 70px;
+      gap:10px;
+      align-items:center;
+    }
+    input[type="range"]{width:100%}
+    .small{font-size:12px; color:var(--muted)}
+
+    .panel{display:none}
+    .panel.active{display:block}
+
+    .resultGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+    @media (max-width: 980px){ .resultGrid{grid-template-columns:1fr} }
+    .kv{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      background:#fff;
+    }
+    .kv b{display:block; font-size:12px; color:var(--muted); margin-bottom:6px}
+    .kv div{font-size:14px; font-weight:800}
+    .mono{font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
+
+    .radioList{display:flex; flex-direction:column; gap:10px}
+    .radioItem{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+      display:flex; gap:10px; align-items:flex-start;
+    }
+    .radioItem:hover{border-color:rgba(30,94,255,.25)}
+    .score{margin-left:auto; font-size:12px; color:var(--muted)}
+    .toast{
+      position:fixed; left:50%; bottom:18px; transform:translateX(-50%);
+      background:#0f172a;
+      color:#fff;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:12px;
+      opacity:0;
+      pointer-events:none;
+      transition:.2s ease;
+      box-shadow:0 14px 28px rgba(0,0,0,.25);
+    }
+    .toast.show{opacity:1}
+    footer{
+      color:var(--muted);
+      font-size:12px;
+      text-align:center;
+      padding:18px 0 30px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="title">
+        <div class="brand">
+          <div class="logo"></div>
+          <div>
+            <h1>CBME YHCT – Demo (Text → VAS → Suy luận)</h1>
+            <div class="sub">Tab 1: Hồ sơ + Tứ chẩn | Tab 2: Hỏi lại + Kết quả 5 trục + Chốt chẩn đoán</div>
+          </div>
+        </div>
+        <div class="pill">🔵 Theme: Trắng & Xanh dương · Static HTML (deploy Vercel)</div>
+      </div>
+
+      <div class="tabs">
+        <button class="tabbtn active" id="btnTab1" type="button">📝 Tab 1 · Nhập dữ liệu</button>
+        <button class="tabbtn" id="btnTab2" type="button">📤 Tab 2 · Kết quả</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- =========================
+         TAB 1
+    ========================== -->
+    <section class="panel active" id="tab1">
+      <div class="grid">
+        <!-- Ô 1: Hành chính + hồ sơ -->
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">
+              <b>Ô 1 · Khai báo hành chính & quản lý hồ sơ</b>
+              <span>Hồ sơ mới hoặc mở từ file JSON. Tên file lưu mặc định: <span class="mono">HoTen_YYYY-MM-DD_HH-mm.json</span></span>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="row">
+              <div>
+                <label>Ngày giờ khám</label>
+                <input id="visitAt" type="datetime-local" />
+              </div>
+              <div>
+                <label>Họ tên người bệnh (bắt buộc khi tạo hồ sơ mới)</label>
+                <input id="patientName" type="text" placeholder="VD: Bà 5" />
+              </div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="hint">
+              <b>2 tuyến làm việc</b><br/>
+              1) Hồ sơ mới: nhập họ tên → <b>Tạo hồ sơ</b>.<br/>
+              2) Hồ sơ cũ: chọn file <b>.json</b> → <b>Mở hồ sơ</b> (tự đổ dữ liệu vào form).
+            </div>
+
+            <div class="btnRow">
+              <button class="btn" id="btnCreateCase" type="button">➕ Tạo hồ sơ</button>
+
+              <label class="btn secondary" style="margin:0; cursor:pointer;">
+                📂 Chọn file JSON
+                <input id="jsonFile" type="file" accept=".json,application/json" style="display:none">
+              </label>
+
+              <button class="btn ghost" id="btnOpenCase" type="button">📌 Mở hồ sơ</button>
+              <button class="btn danger" id="btnReset" type="button">🧹 Xoá dữ liệu</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="muted">
+              <b>Case ID:</b> <span class="mono" id="caseId">—</span><br/>
+              <b>Trạng thái:</b> <span id="caseStatus">Chưa tạo/mở hồ sơ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ô 2: Tứ chẩn text -->
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">
+              <b>Ô 2 · Mô tả triệu chứng theo YHCT (Tứ chẩn)</b>
+              <span>Mỗi triệu chứng 1 dòng, định dạng: <b>Tên triệu chứng: mô tả chi tiết</b></span>
+            </div>
+          </div>
+          <div class="cardBody">
+            <label>Triệu chứng / dấu hiệu (mỗi dòng 1 ý)</label>
+            <textarea id="tcText" placeholder="VD:
+Vấn: Đau lưng: đau âm ỉ nhiều năm, tăng khi vận động, giảm khi nghỉ.
+Vấn: Đau gối: gặp lạnh đau tăng, có lúc sưng nóng đỏ, hạn chế gấp duỗi.
+Vọng: Lưỡi: nhạt, rêu trắng.
+Thiết: Mạch: trầm tế."></textarea>
+
+            <div class="btnRow">
+              <button class="btn" id="btnExtract" type="button">🧠 Tách triệu chứng (demo)</button>
+              <button class="btn secondary" id="btnGoTab2" type="button">➡️ Sang Tab 2</button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="hint">
+              <b>Lưu ý:</b> Ở bản demo này, nút “Tách triệu chứng” dùng thuật toán đơn giản (tách theo dòng & dấu “:”). Khi nối backend thật,
+              bạn thay bằng API <span class="mono">POST /extract</span>.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Preview list + VAS (human-in-loop) -->
+      <div style="height:16px"></div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div class="cardTitle">
+            <b>Bước VAS · Người dùng kéo thang VAS cho từng triệu chứng</b>
+            <span>Đúng yêu cầu: <b>VAS do người dùng gán</b>, không phải AI tự làm.</span>
+          </div>
+          <div class="btnRow" style="margin:0">
+            <button class="btn secondary" id="btnAutoRank" type="button">📊 Sắp xếp theo VAS</button>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div id="symList" class="symList"></div>
+
+          <div class="divider"></div>
+
+          <div class="btnRow">
+            <button class="btn" id="btnInfer" type="button">⚙️ Suy luận (demo)</button>
+            <button class="btn secondary" id="btnSaveJson" type="button">💾 Lưu hồ sơ .json</button>
+          </div>
+
+          <div class="muted" style="margin-top:10px">
+            Gợi ý tích hợp backend: thay “Suy luận (demo)” bằng <span class="mono">POST /infer</span>, payload gồm symptoms + VAS + answers.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================
+         TAB 2
+    ========================== -->
+    <section class="panel" id="tab2">
+      <div class="grid">
+        <!-- Ô A: hỏi lại -->
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">
+              <b>Ô A · CBME hỏi lại (thông tin còn thiếu)</b>
+              <span>Người dùng có thể bổ sung hoặc bỏ qua, rồi suy luận lại.</span>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div id="followUps" class="radioList"></div>
+
+            <div class="divider"></div>
+
+            <label>Bổ sung thêm (tuỳ chọn)</label>
+            <textarea id="extraText" placeholder="VD: Có sợ lạnh không? Có tiểu đêm không? ..."></textarea>
+
+            <div class="btnRow">
+              <button class="btn" id="btnInferAgain" type="button">🔁 Suy luận lại</button>
+              <button class="btn ghost" id="btnBackTab1" type="button">⬅️ Quay lại Tab 1</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ô B: kết quả 5 trục -->
+        <div class="card">
+          <div class="cardHead">
+            <div class="cardTitle">
+              <b>Ô B · Kết quả (5 phần)</b>
+              <span>Chứng · Vị trí · Nguyên nhân · Bát cương · Hội chứng bệnh</span>
+            </div>
+          </div>
+          <div class="cardBody">
+            <div class="resultGrid">
+              <div class="kv"><b>Chứng</b><div id="outPattern">—</div></div>
+              <div class="kv"><b>Vị trí</b><div id="outLocation">—</div></div>
+              <div class="kv"><b>Nguyên nhân / Cơ chế</b><div id="outMechanism">—</div></div>
+              <div class="kv"><b>Bát cương</b><div id="outEight">—</div></div>
+              <div class="kv" style="grid-column:1/-1"><b>Hội chứng bệnh</b><div id="outSyndrome">—</div></div>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="hint" id="outExplain">
+              <b>Biện luận:</b> —<br/>
+              <b>Dẫn chứng (demo):</b> —<br/>
+              <b>Score:</b> —
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ô C: chọn chẩn đoán -->
+      <div style="height:16px"></div>
+
+      <div class="card">
+        <div class="cardHead">
+          <div class="cardTitle">
+            <b>Ô C · Bác sĩ chọn chẩn đoán hợp lý nhất</b>
+            <span>Chọn 1 kết luận cuối (có thể override nhập tay).</span>
+          </div>
+          <div class="btnRow" style="margin:0">
+            <button class="btn secondary" id="btnExportFinal" type="button">✅ Chốt & Lưu .json</button>
+          </div>
+        </div>
+        <div class="cardBody">
+          <div id="candidates" class="radioList"></div>
+
+          <div class="divider"></div>
+
+          <div class="row">
+            <div>
+              <label>Override (nhập tay nếu muốn)</label>
+              <input id="overrideDx" type="text" placeholder="VD: Thận dương hư kiêm Tỳ hư thấp trệ" />
+            </div>
+            <div>
+              <label>Ghi chú</label>
+              <input id="note" type="text" placeholder="VD: cân nhắc phối hợp chứng / cần bổ sung lưỡi mạch..." />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="toast" id="toast"></div>
+  </main>
+
+  <footer>
+    Demo HTML thuần để test UI/luồng trên Vercel · Khi nối backend: dùng <span class="mono">/extract</span> và <span class="mono">/infer</span>.
+  </footer>
+
+  <script>
+    // ===========================
+    // Helpers
+    // ===========================
+    const $ = (id) => document.getElementById(id);
+
+    function toast(msg){
+      const t = $("toast");
+      t.textContent = msg;
+      t.classList.add("show");
+      setTimeout(()=>t.classList.remove("show"), 1800);
+    }
+
+    function pad2(n){ return String(n).padStart(2,"0"); }
+    function toLocalDatetimeInputValue(d){
+      const yyyy = d.getFullYear();
+      const mm = pad2(d.getMonth()+1);
+      const dd = pad2(d.getDate());
+      const hh = pad2(d.getHours());
+      const mi = pad2(d.getMinutes());
+      return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
+    }
+
+    function safeName(name){
+      return (name || "BenhNhan")
+        .trim()
+        .replace(/\s+/g, "_")
+        .replace(/[^\w\-À-ỹ_]/g, "");
+    }
+
+    function buildFilename(patientName, visitAt){
+      const name = safeName(patientName);
+      const d = visitAt ? new Date(visitAt) : new Date();
+      const yyyy = d.getFullYear();
+      const mm = pad2(d.getMonth()+1);
+      const dd = pad2(d.getDate());
+      const hh = pad2(d.getHours());
+      const mi = pad2(d.getMinutes());
+      return `${name}_${yyyy}-${mm}-${dd}_${hh}-${mi}.json`;
+    }
+
+    function downloadJSON(obj, filename){
+      const blob = new Blob([JSON.stringify(obj, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }
+
+    // ===========================
+    // State
+    // ===========================
+    const state = {
+      caseId: null,
+      patientName: "",
+      visitAt: "",
+      tcText: "",
+      symptoms: [], // {id,name,desc,vas}
+      followUps: [], // {id, question, answer}
+      results: null, // output
+      candidates: [] // {id,label,score}
+    };
+
+    function setStatus(text){
+      $("caseStatus").textContent = text;
+    }
+
+    function setCaseId(id){
+      state.caseId = id;
+      $("caseId").textContent = id || "—";
+    }
+
+    function saveToLocal(){
+      localStorage.setItem("cbme_demo_state", JSON.stringify(state));
+    }
+
+    function loadFromLocal(){
+      try{
+        const raw = localStorage.getItem("cbme_demo_state");
+        if(!raw) return;
+        const s = JSON.parse(raw);
+        Object.assign(state, s);
+      }catch(e){}
+    }
+
+    function hydrateUI(){
+      $("patientName").value = state.patientName || "";
+      $("visitAt").value = state.visitAt || toLocalDatetimeInputValue(new Date());
+      $("tcText").value = state.tcText || "";
+      setCaseId(state.caseId);
+      setStatus(state.caseId ? "Đã tạo/mở hồ sơ" : "Chưa tạo/mở hồ sơ");
+      renderSymList();
+      renderFollowUps();
+      renderResults();
+      renderCandidates();
+    }
+
+    // ===========================
+    // Tabs
+    // ===========================
+    function showTab(n){
+      const tab1 = $("tab1"), tab2 = $("tab2");
+      const b1 = $("btnTab1"), b2 = $("btnTab2");
+      if(n===1){
+        tab1.classList.add("active"); tab2.classList.remove("active");
+        b1.classList.add("active"); b2.classList.remove("active");
+      }else{
+        tab2.classList.add("active"); tab1.classList.remove("active");
+        b2.classList.add("active"); b1.classList.remove("active");
+      }
+    }
+
+    $("btnTab1").onclick = ()=>showTab(1);
+    $("btnTab2").onclick = ()=>showTab(2);
+    $("btnGoTab2").onclick = ()=>{
+      // require case
+      if(!state.caseId){
+        toast("Bạn cần tạo/mở hồ sơ trước.");
+        return;
+      }
+      showTab(2);
+    };
+    $("btnBackTab1").onclick = ()=>showTab(1);
+
+    // ===========================
+    // Create / Open / Reset
+    // ===========================
+    $("btnCreateCase").onclick = ()=>{
+      const name = $("patientName").value.trim();
+      if(!name){
+        toast("Vui lòng nhập họ tên để tạo hồ sơ.");
+        return;
+      }
+      const visitAt = $("visitAt").value || toLocalDatetimeInputValue(new Date());
+      state.patientName = name;
+      state.visitAt = visitAt;
+      state.tcText = $("tcText").value || "";
+      // simple case id
+      setCaseId("CASE_" + Math.random().toString(16).slice(2,10).toUpperCase());
+      setStatus("Hồ sơ mới đã tạo (chưa lưu file)");
+      saveToLocal();
+      toast("Đã tạo hồ sơ.");
+    };
+
+    $("btnOpenCase").onclick = async ()=>{
+      const file = $("jsonFile").files?.[0];
+      if(!file){
+        toast("Chưa chọn file JSON.");
+        return;
+      }
+      try{
+        const text = await file.text();
+        const obj = JSON.parse(text);
+
+        // Basic mapping
+        state.caseId = obj.case_id || obj.caseId || null;
+        state.patientName = obj.patient?.name || obj.patientName || "";
+        state.visitAt = obj.visit_at || obj.visitAt || "";
+        state.tcText = obj.tu_chan_text
